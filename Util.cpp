@@ -35,7 +35,7 @@ namespace DolphinUtil {
 
     std::string GetModuleName() {
         std::string path = DolphinUtil::GetModuleFile();
-        int idx = path.find_last_of("\\"); // windows style
+        auto idx = path.find_last_of("\\"); // windows style
         if (idx == std::string::npos) {
             idx = path.find_last_of("/"); // linux style
         }
@@ -49,7 +49,7 @@ namespace DolphinUtil {
 
     std::string GetModuleFileDir(){
         std::string path = DolphinUtil::GetModuleFile();
-        int idx = path.find_last_of("\\"); // windows style
+        auto idx = path.find_last_of("\\"); // windows style
         if(idx == std::string::npos){
             idx = path.find_last_of("/"); // linux style
         }
@@ -182,7 +182,7 @@ namespace DolphinUtil {
 
         return ini.GetLongValue(section.c_str(), key.c_str(), defautValue);
 #endif
-    };
+    }
 
     bool GetIniFileBool(std::string path, std::string section, std::string key, bool defautValue) {
         std::string defaultString = defautValue ? "true" : "false";
@@ -192,5 +192,5 @@ namespace DolphinUtil {
         if (value == "false") return false;
 
         return defautValue;
-    };
+    }
 }

@@ -266,12 +266,30 @@ ConversionResult ConvertUTF16toUTF8 (
 	    source = oldSource; /* Back up source pointer! */
 	    target -= bytesToWrite; result = targetExhausted; break;
 	}
-	switch (bytesToWrite) { /* note: everything falls through. */
+
+	/* error: unannotated fall-through between switch labels [-Werror,-Wimplicit-fallthrough] 
+	switch (bytesToWrite) { // note: everything falls through.
 	    case 4: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
 	    case 3: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
 	    case 2: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
 	    case 1: *--target =  (UTF8)(ch | firstByteMark[bytesToWrite]);
+	}*/
+	if(bytesToWrite == 4){
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target =  (UTF8)(ch | firstByteMark[bytesToWrite]);
+	}else if(bytesToWrite == 3){
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target =  (UTF8)(ch | firstByteMark[bytesToWrite]);
+	}else if(bytesToWrite == 2){
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target =  (UTF8)(ch | firstByteMark[bytesToWrite]);
+	}else if(bytesToWrite == 1){
+		*--target =  (UTF8)(ch | firstByteMark[bytesToWrite]);
 	}
+
 	target += bytesToWrite;
     }
     *sourceStart = source;
@@ -292,18 +310,19 @@ ConversionResult ConvertUTF16toUTF8 (
  * definition of UTF-8 goes up to 4-byte sequences.
  */
 
+/* error: unannotated fall-through between switch labels [-Werror,-Wimplicit-fallthrough] 
 static Boolean isLegalUTF8(const UTF8 *source, int length) {
     UTF8 a;
     const UTF8 *srcptr = source+length;
     switch (length) {
     default: return false;
-	/* Everything else falls through when "true"... */
+	// Everything else falls through when "true"... 
     case 4: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
     case 3: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
     case 2: if ((a = (*--srcptr)) > 0xBF) return false;
 
 	switch (*source) {
-	    /* no fall-through in this inner switch */
+	    // no fall-through in this inner switch
 	    case 0xE0: if (a < 0xA0) return false; break;
 	    case 0xED: if (a > 0x9F) return false; break;
 	    case 0xF0: if (a < 0x90) return false; break;
@@ -314,6 +333,62 @@ static Boolean isLegalUTF8(const UTF8 *source, int length) {
     case 1: if (*source >= 0x80 && *source < 0xC2) return false;
     }
     if (*source > 0xF4) return false;
+    return true;
+}*/
+
+static Boolean isLegalUTF8(const UTF8 *source, int length) {
+    UTF8 a;
+    const UTF8 *srcptr = source+length;
+
+	if(length == 4){
+		if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+		if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+		if ((a = (*--srcptr)) > 0xBF) return false;
+
+		switch (*source) {
+			// no fall-through in this inner switch
+			case 0xE0: if (a < 0xA0) return false; break;
+			case 0xED: if (a > 0x9F) return false; break;
+			case 0xF0: if (a < 0x90) return false; break;
+			case 0xF4: if (a > 0x8F) return false; break;
+			default:   if (a < 0x80) return false;
+		}
+
+		if (*source >= 0x80 && *source < 0xC2) return false;
+	}else if(length == 3){
+		if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+		if ((a = (*--srcptr)) > 0xBF) return false;
+
+		switch (*source) {
+			// no fall-through in this inner switch
+			case 0xE0: if (a < 0xA0) return false; break;
+			case 0xED: if (a > 0x9F) return false; break;
+			case 0xF0: if (a < 0x90) return false; break;
+			case 0xF4: if (a > 0x8F) return false; break;
+			default:   if (a < 0x80) return false;
+		}
+
+		if (*source >= 0x80 && *source < 0xC2) return false;
+	}else if(length == 2){
+		if ((a = (*--srcptr)) > 0xBF) return false;
+
+		switch (*source) {
+			// no fall-through in this inner switch
+			case 0xE0: if (a < 0xA0) return false; break;
+			case 0xED: if (a > 0x9F) return false; break;
+			case 0xF0: if (a < 0x90) return false; break;
+			case 0xF4: if (a > 0x8F) return false; break;
+			default:   if (a < 0x80) return false;
+		}
+
+		if (*source >= 0x80 && *source < 0xC2) return false;
+	}else if(length == 1){
+		if (*source >= 0x80 && *source < 0xC2) return false;
+	}else{
+		return false;
+	}
+
+	if (*source > 0xF4) return false;
     return true;
 }
 
@@ -353,14 +428,44 @@ ConversionResult ConvertUTF8toUTF16 (
 	/*
 	 * The cases all fall through. See "Note A" below.
 	 */
+	/*
 	switch (extraBytesToRead) {
-	    case 5: ch += *source++; ch <<= 6; /* remember, illegal UTF-8 */
-	    case 4: ch += *source++; ch <<= 6; /* remember, illegal UTF-8 */
+	    case 5: ch += *source++; ch <<= 6; // remember, illegal UTF-8 
+	    case 4: ch += *source++; ch <<= 6; // remember, illegal UTF-8
 	    case 3: ch += *source++; ch <<= 6;
 	    case 2: ch += *source++; ch <<= 6;
 	    case 1: ch += *source++; ch <<= 6;
 	    case 0: ch += *source++;
+	}*/
+	if(extraBytesToRead == 5){
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++;
+	}else if(extraBytesToRead == 4){
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++;
+	}else if(extraBytesToRead == 3){
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++;
+	}else if(extraBytesToRead == 2){
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++;
+	}else if(extraBytesToRead == 1){
+		ch += *source++; ch <<= 6;
+		ch += *source++;
+	}else if(extraBytesToRead == 0){
+		ch += *source++;
 	}
+
 	ch -= offsetsFromUTF8[extraBytesToRead];
 
 	if (target >= targetEnd) {
@@ -444,12 +549,33 @@ ConversionResult ConvertUTF32toUTF8 (
 	    --source; /* Back up source pointer! */
 	    target -= bytesToWrite; result = targetExhausted; break;
 	}
-	switch (bytesToWrite) { /* note: everything falls through. */
+
+	/*switch (bytesToWrite) { // note: everything falls through.
 	    case 4: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
 	    case 3: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
 	    case 2: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
 	    case 1: *--target = (UTF8) (ch | firstByteMark[bytesToWrite]);
+	}*/
+
+	if(bytesToWrite == 4){
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target = (UTF8) (ch | firstByteMark[bytesToWrite]);
+	}else if(bytesToWrite == 3){
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target = (UTF8) (ch | firstByteMark[bytesToWrite]);
+	}else if(bytesToWrite == 2){
+		*--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+		*--target = (UTF8) (ch | firstByteMark[bytesToWrite]);
+	}else if(bytesToWrite == 1){
+		*--target = (UTF8) (ch | firstByteMark[bytesToWrite]);
 	}
+
+
+
+
 	target += bytesToWrite;
     }
     *sourceStart = source;
@@ -479,6 +605,7 @@ ConversionResult ConvertUTF8toUTF32 (
 	/*
 	 * The cases all fall through. See "Note A" below.
 	 */
+	/*
 	switch (extraBytesToRead) {
 	    case 5: ch += *source++; ch <<= 6;
 	    case 4: ch += *source++; ch <<= 6;
@@ -486,7 +613,36 @@ ConversionResult ConvertUTF8toUTF32 (
 	    case 2: ch += *source++; ch <<= 6;
 	    case 1: ch += *source++; ch <<= 6;
 	    case 0: ch += *source++;
+	}*/
+	if(extraBytesToRead == 5){
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++;
+	}else if(extraBytesToRead == 4){
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++;
+	}else if(extraBytesToRead == 3){
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++;
+	}else if(extraBytesToRead == 2){
+		ch += *source++; ch <<= 6;
+		ch += *source++; ch <<= 6;
+		ch += *source++;
+	}else if(extraBytesToRead == 1){
+		ch += *source++; ch <<= 6;
+		ch += *source++;
+	}else if(extraBytesToRead == 0){
+		ch += *source++;
 	}
+
 	ch -= offsetsFromUTF8[extraBytesToRead];
 
 	if (target >= targetEnd) {
