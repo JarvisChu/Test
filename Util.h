@@ -14,6 +14,7 @@ namespace DolphinUtil {
     std::string GetDateTimeString(std::string format = "%m-%d %H:%M:%S");
     bool IsDirExists(std::string path);
     bool CreateDir(std::string path);
+    bool DelFile(std::string path);
 
     // Ini file operations
     bool SetIniFile(std::string path, std::string section, std::string key, std::string value);

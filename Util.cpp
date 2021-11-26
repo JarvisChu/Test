@@ -127,6 +127,14 @@ namespace DolphinUtil {
 #endif
     }
 
+    bool DelFile(std::string path) {
+#ifdef _WIN32
+        return (bool) DeleteFileA(path.c_str());
+#else
+       return 0 == remove(path.c_str());
+#endif
+    }
+
     // Ini file operations
     bool SetIniFile(std::string path, std::string section, std::string key, std::string value){
 #ifdef _WIN32
