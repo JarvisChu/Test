@@ -1,6 +1,7 @@
 ﻿//#include "define.h"
 #include "log.h"
 #include <stdio.h>
+#include <stdarg.h>
 #include <iostream>
 #include "Util.h"
 

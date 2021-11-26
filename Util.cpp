@@ -1,6 +1,5 @@
 #include <string>
 #include <time.h>
-#include <cstdarg>
 #include "SimpleIni.h"
 
 
