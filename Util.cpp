@@ -85,7 +85,7 @@ namespace DolphinUtil {
         ::sprintf_s(szTmp, _countof(szTmp), ("%ld"), dwPID);
         return szTmp;
 #else
-        int tid = gettid();
+        int tid = getpid();//gettid();
         return std::to_string(tid);
 #endif
     }
