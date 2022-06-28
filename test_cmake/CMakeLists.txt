@@ -63,6 +63,6 @@ if(MSVC OR MSYS OR MINGW)
     message(STATUS "MSVC OR MSYS OR MINGW defined")
 endif()
 
-#add_subdirectory(sub)
+add_subdirectory(sub)
 
 add_executable(helloapp main.cpp)
