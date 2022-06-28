@@ -87,8 +87,8 @@
     bit mask & shift operations.
 ------------------------------------------------------------------------ */
 
-#ifndef DOLPHIN_UTIL_CONVERT_UTF_H_
-#define DOLPHIN_UTIL_CONVERT_UTF_H_
+#ifndef UTIL_CONVERT_UTF_H_
+#define UTIL_CONVERT_UTF_H_
 
 typedef unsigned int	UTF32;	/* at least 32 bits */
 typedef unsigned short	UTF16;	/* at least 16 bits */
@@ -149,6 +149,6 @@ Boolean isLegalUTF8Sequence(const UTF8 *source, const UTF8 *sourceEnd);
 }
 #endif
 
-#endif // DOLPHIN_UTIL_CONVERT_UTF_H_
+#endif
 
 /* --------------------------------------------------------------------- */

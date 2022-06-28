@@ -52,16 +52,16 @@ void Log::Write(ENM_LOGGER_LEVEL logLevel,
     }
 
     std::string strModuleName = ("[#");
-    strModuleName.append(DolphinUtil::GetModuleName());
+    strModuleName.append(Util::GetModuleName());
     strModuleName.append(("#]"));
 
     std::string strPidAndTid = ("[");
-    strPidAndTid.append(DolphinUtil::GetCurrentPID());
+    strPidAndTid.append(Util::GetCurrentPID());
     strPidAndTid.append((", "));
-    strPidAndTid.append(DolphinUtil::GetCurrentTID());
+    strPidAndTid.append(Util::GetCurrentTID());
     strPidAndTid.append(("]"));
 
-    std::string strDateTime = DolphinUtil::GetDateTimeString();
+    std::string strDateTime = Util::GetDateTimeString();
 
     const size_t nLogBufferLength = 14 * 4096;
     char szLog[nLogBufferLength] = { 0 };
@@ -114,19 +114,19 @@ void Log::Write(ENM_LOGGER_LEVEL logLevel,
 
 FILE* Log::CreateLogFile()
 {
-    std::string cacheDir = DolphinUtil::GetCacheDir();
+    std::string cacheDir = Util::GetCacheDir();
     std::string logDir = cacheDir + "/logs/";
 
-    if (!DolphinUtil::IsDirExists(logDir)) {
-        if (!DolphinUtil::CreateDir(logDir)) {
+    if (!Util::IsDirExists(logDir)) {
+        if (!Util::CreateDir(logDir)) {
             return NULL;
         }
     }
 
     std::string path = logDir
-        + "dolphin_electron_core_"
-        + DolphinUtil::GetDateTimeString("%Y_%m_%d_%H_%M_%S") + "_"
-        + DolphinUtil::GetCurrentPID() + ".txt";
+        + "electron_core_"
+        + Util::GetDateTimeString("%Y_%m_%d_%H_%M_%S") + "_"
+        + Util::GetCurrentPID() + ".txt";
 
     FILE* f = fopen(path.c_str(), "wb+");
     return f;
@@ -135,11 +135,11 @@ FILE* Log::CreateLogFile()
 // 检查是否开启了日志，默认是为开启
 int Log::CheckLogFileEnabled()
 {
-    std::string path = DolphinUtil::GetModuleFileDir();
+    std::string path = Util::GetModuleFileDir();
     path += "/resources/configs.ini";
 
     // 默认为日志需要存盘
-    bool bRet = DolphinUtil::GetIniFileBool(path, "environment", "electron_log", true);
+    bool bRet = Util::GetIniFileBool(path, "environment", "electron_log", true);
     return bRet ? LOG_FLAG_SAVE2FILE : LOG_FLAG_NO_SAVE;
 }
 

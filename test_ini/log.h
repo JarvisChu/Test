@@ -1,5 +1,5 @@
-﻿#ifndef DOLPHIN_UTIL_LOG_H_
-#define DOLPHIN_UTIL_LOG_H_
+﻿#ifndef UTIL_LOG_H_
+#define UTIL_LOG_H_
 
 #include <string>
 
@@ -69,4 +69,4 @@ private:
 
 #define LOGGER                      Log __tmp_logger__((__FILE__), (__FUNCTION__), __LINE__)
 
-#endif  // DOLPHIN_UTIL_LOG_H_
+#endif

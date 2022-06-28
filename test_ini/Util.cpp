@@ -12,7 +12,7 @@
 #include <unistd.h>
 #endif
 
-namespace DolphinUtil {
+namespace Util {
     // Directory Operations
 
     std::string GetModuleFile(){
@@ -34,7 +34,7 @@ namespace DolphinUtil {
     }
 
     std::string GetModuleName() {
-        std::string path = DolphinUtil::GetModuleFile();
+        std::string path = Util::GetModuleFile();
         auto idx = path.find_last_of("\\"); // windows style
         if (idx == std::string::npos) {
             idx = path.find_last_of("/"); // linux style
@@ -48,7 +48,7 @@ namespace DolphinUtil {
     }
 
     std::string GetModuleFileDir(){
-        std::string path = DolphinUtil::GetModuleFile();
+        std::string path = Util::GetModuleFile();
         auto idx = path.find_last_of("\\"); // windows style
         if(idx == std::string::npos){
             idx = path.find_last_of("/"); // linux style

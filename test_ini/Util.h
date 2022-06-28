@@ -1,9 +1,9 @@
-#ifndef DOLPHIN_UTIL_UTIL_H_
-#define DOLPHIN_UTIL_UTIL_H_
+#ifndef UTIL_UTIL_H_
+#define UTIL_UTIL_H_
 
 #include <string>
 
-namespace DolphinUtil {
+namespace Util {
     // Directory Operations
     std::string GetModuleFile();
     std::string GetModuleName();
@@ -23,4 +23,4 @@ namespace DolphinUtil {
     bool GetIniFileBool(std::string path, std::string section, std::string key, bool defautValue);
 }
 
-#endif // DOLPHIN_UTIL_UTIL_H_
+#endif
