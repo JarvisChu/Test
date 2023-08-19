@@ -1,0 +1,3 @@
+/Users/jarvischu/code/github/test/test_modern_cpp/build/CMakeFiles/rebuild_cache.dir
+/Users/jarvischu/code/github/test/test_modern_cpp/build/CMakeFiles/edit_cache.dir
+/Users/jarvischu/code/github/test/test_modern_cpp/build/CMakeFiles/TestModernCPP.dir
